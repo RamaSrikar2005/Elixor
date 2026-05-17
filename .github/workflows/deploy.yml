@@ -45,6 +45,8 @@ jobs:
       - name: Build
         run: npm run build
         env:
+          # Set VITE_API_URL to your Droplet backend URL in GitHub secrets
+          # e.g.  http://YOUR_DROPLET_IP:5001/api
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
           VITE_SOCKET_URL: ${{ secrets.VITE_SOCKET_URL }}
       - name: Upload dist artifact
@@ -60,7 +62,6 @@ jobs:
     needs: [frontend-build]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    # Map secrets to env so we can check them in step-level conditions
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -68,11 +69,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Skip notice (secrets not configured)
+      - name: Notice — Vercel secrets not configured
         if: env.VERCEL_TOKEN == ''
         run: |
-          echo "⚠️  VERCEL_TOKEN secret is not set."
-          echo "Add VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID to GitHub repo secrets to enable auto-deploy."
+          echo "⚠️  VERCEL_TOKEN is not set. Add these to GitHub repo secrets:"
+          echo "   VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID"
+          echo "   Skipping Vercel deployment."
 
       - name: Install Vercel CLI
         if: env.VERCEL_TOKEN != ''
@@ -90,24 +92,45 @@ jobs:
         working-directory: frontend
         run: vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
 
-  # ── Deploy Backend → Render ───────────────────────────────────
+  # ── Deploy Backend → DigitalOcean Droplet (SSH) ───────────────
   deploy-backend:
-    name: Deploy Backend (Render)
+    name: Deploy Backend (DigitalOcean)
     needs: [backend-test]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     env:
-      RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+      DO_HOST: ${{ secrets.DO_HOST }}
+      DO_USER: ${{ secrets.DO_USER }}
+      DO_SSH_KEY: ${{ secrets.DO_SSH_KEY }}
     steps:
-      - name: Skip notice (hook not configured)
-        if: env.RENDER_DEPLOY_HOOK == ''
+      - name: Notice — DigitalOcean secrets not configured
+        if: env.DO_HOST == ''
         run: |
-          echo "⚠️  RENDER_DEPLOY_HOOK secret is not set."
-          echo "Add it in GitHub repo secrets to enable auto-deploy to Render."
+          echo "⚠️  DO_HOST is not set. Add these to GitHub repo secrets:"
+          echo "   DO_HOST  — your Droplet IP or hostname"
+          echo "   DO_USER  — SSH user (usually 'root' or your username)"
+          echo "   DO_SSH_KEY — private SSH key that can access the Droplet"
+          echo "   Skipping backend deployment."
 
-      - name: Trigger Render deploy
-        if: env.RENDER_DEPLOY_HOOK != ''
-        run: |
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$RENDER_DEPLOY_HOOK")
-          echo "Render webhook HTTP $STATUS"
-          [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 400 ] || exit 1
+      - name: Deploy via SSH
+        if: env.DO_HOST != ''
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          key: ${{ secrets.DO_SSH_KEY }}
+          script: |
+            set -e
+            echo "=== Pulling latest code ==="
+            cd /root/auramain          # change this to wherever you cloned the repo
+            git pull origin main
+
+            echo "=== Installing backend dependencies ==="
+            cd backend
+            npm ci --omit=dev
+
+            echo "=== Restarting backend (pm2) ==="
+            pm2 restart elixor-backend || pm2 start src/server.js --name elixor-backend
+            pm2 save
+
+            echo "=== Deploy complete ==="
