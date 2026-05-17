@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './store/authStore.js';
+import SplashScreen, { shouldShowSplash } from './components/ui/SplashScreen.jsx';
 
 // Pages (lazy loaded)
 const AuthPage      = React.lazy(() => import('./pages/AuthPage.jsx'));
@@ -34,30 +35,36 @@ function FullScreenLoader() {
 
 export default function App() {
   const init = useAuthStore(s => s.init);
+  const [splashDone, setSplashDone] = useState(!shouldShowSplash());
 
   useEffect(() => { init(); }, []);
 
   return (
-    <React.Suspense fallback={<FullScreenLoader />}>
-      <Routes>
-        <Route path="/auth" element={<AuthPage />} />
-        <Route path="/" element={
-          <RequireAuth>
-            <AppLayout />
-          </RequireAuth>
-        }>
-          <Route index         element={<Navigate to="/dashboard" replace />} />
-          <Route path="dashboard" element={<DashboardPage />} />
-          <Route path="tasks"     element={<TasksPage />} />
-          <Route path="habits"    element={<HabitsPage />} />
-          <Route path="finance"   element={<FinancePage />} />
-          <Route path="analytics" element={<AnalyticsPage />} />
-          <Route path="ai"        element={<AiPage />} />
-          <Route path="focus"     element={<FocusPage />} />
-          <Route path="study"     element={<StudyPage />} />
-        </Route>
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
-      </Routes>
-    </React.Suspense>
+    <>
+      {/* Splash overlay — renders above everything, clears itself after 4 s */}
+      {!splashDone && <SplashScreen onDone={() => setSplashDone(true)} />}
+
+      <React.Suspense fallback={<FullScreenLoader />}>
+        <Routes>
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/" element={
+            <RequireAuth>
+              <AppLayout />
+            </RequireAuth>
+          }>
+            <Route index            element={<Navigate to="/dashboard" replace />} />
+            <Route path="dashboard" element={<DashboardPage />} />
+            <Route path="tasks"     element={<TasksPage />} />
+            <Route path="habits"    element={<HabitsPage />} />
+            <Route path="finance"   element={<FinancePage />} />
+            <Route path="analytics" element={<AnalyticsPage />} />
+            <Route path="ai"        element={<AiPage />} />
+            <Route path="focus"     element={<FocusPage />} />
+            <Route path="study"     element={<StudyPage />} />
+          </Route>
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
+      </React.Suspense>
+    </>
   );
 }

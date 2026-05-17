@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build artifacts — rebuilt by Vercel/CI
+frontend/dist/
+
+# Environment files (never commit secrets)
+.env
+.env.local
+.env.*.local
+backend/.env
+
+# OS / editor artifacts
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/settings.json
+
+# Logs
+*.log
+npm-debug.log*

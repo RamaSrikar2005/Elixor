@@ -75,11 +75,13 @@ api.interceptors.response.use(
 
 // ─── Auth ─────────────────────────────────────────────────────
 export const authApi = {
-  register: (d)  => api.post('/auth/register', d),
-  login:    (d)  => api.post('/auth/login', d),
-  logout:   ()   => api.post('/auth/logout'),
-  refresh:  ()   => api.post('/auth/refresh'),
-  me:       ()   => api.get('/auth/me'),
+  register:   (d)         => api.post('/auth/register', d),
+  login:      (d)         => api.post('/auth/login', d),
+  sendOtp:    (email)     => api.post('/auth/send-otp', { email }),
+  verifyOtp:  (email, otp)=> api.post('/auth/verify-otp', { email, otp }),
+  logout:     ()          => api.post('/auth/logout'),
+  refresh:    ()          => api.post('/auth/refresh'),
+  me:         ()          => api.get('/auth/me'),
 };
 
 // ─── Tasks ────────────────────────────────────────────────────
@@ -103,6 +105,7 @@ export const habitsApi = {
 export const financeApi = {
   list:      (p={}) => api.get('/finance', { params: p }),
   create:    (d)    => api.post('/finance', d),
+  delete:    (id)   => api.delete(`/finance/${id}`),
   analytics: (p={}) => api.get('/finance/analytics', { params: p }),
 };
 
@@ -124,18 +127,26 @@ export const aiApi = {
   history: (limit=50)=> api.get(`/ai/history?limit=${limit}`),
   clear:   ()        => api.delete('/ai/history'),
 
-  /** Streaming — returns a ReadableStream reader */
-  stream: async (message, token) => {
-    const res = await fetch(`${BASE_URL}/ai/chat/stream`, {
-      method: 'POST',
+  /**
+   * Streaming — returns the fetch Response.
+   * Applies a 90-second hard timeout via AbortController.
+   * The caller must use the returned `.abort` method if it unmounts early.
+   */
+  stream: (message, token) => {
+    const ctrl    = new AbortController();
+    const timeout = setTimeout(() => ctrl.abort(), 90_000);
+    const promise = fetch(`${BASE_URL}/ai/chat/stream`, {
+      method:      'POST',
       credentials: 'include',
+      signal:      ctrl.signal,
       headers: {
         'Content-Type':  'application/json',
         'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ message }),
-    });
-    return res;
+    }).finally(() => clearTimeout(timeout));
+    promise.abort = () => ctrl.abort();
+    return promise;
   },
 };
 

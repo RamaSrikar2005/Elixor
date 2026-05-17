@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, Send, X, Minimize2 } from 'lucide-react';
 import { aiApi } from '../../services/api.js';
@@ -41,7 +41,7 @@ export default function FloatingAI() {
         role: 'assistant', id: 'init',
         content: d
           ? `${timeGreet}, ${d.name.split(' ')[0]}! 👋 Productivity at **${dashboard.scores?.productivity || 0}/100** · Streak **${d.streak}d** · ${dashboard.tasks?.done || 0}/${dashboard.tasks?.total || 0} tasks done. How can I help?`
-          : `${timeGreet}! I'm Elixor AI 🧠 Ask me about your productivity, habits, or goals.`,
+          : `${timeGreet}! I'm **AURA.AI** ⚡ Your AI layer inside ELIXOR. Ask me anything!`,
       }]);
     }
     setPulse(false);
@@ -125,7 +125,7 @@ export default function FloatingAI() {
                 <Zap size={13} className="text-white" />
               </div>
               <div className="flex-1">
-                <div className="text-xs font-bold">Elixor AI</div>
+                <div className="text-xs font-bold">AURA.AI</div>
                 <div className="font-mono text-[9px] text-[#10b981]">● Online</div>
               </div>
               <button onClick={() => setOpen(false)} className="text-[rgba(186,230,253,0.3)] hover:text-[rgba(186,230,253,0.8)] transition-colors">

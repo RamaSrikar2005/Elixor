@@ -137,12 +137,22 @@ export const useAppStore = create((set, get) => ({
     set(s => ({ loading: { ...s.loading, finance: true } }));
     try {
       const [txRes, analyticsRes] = await Promise.all([
-        financeApi.list({ limit: 20 }),
+        financeApi.list({ limit: 50 }),
         financeApi.analytics(),
       ]);
       set({ transactions: txRes.data.data, finAnalytics: analyticsRes.data.data });
     } finally {
       set(s => ({ loading: { ...s.loading, finance: false } }));
+    }
+  },
+
+  deleteTransaction: async (id) => {
+    set(s => ({ transactions: s.transactions.filter(t => t._id !== id) }));
+    try {
+      await financeApi.delete(id);
+      get().loadFinance(); // refresh analytics after deletion
+    } catch {
+      get().loadFinance(); // restore on error
     }
   },
 

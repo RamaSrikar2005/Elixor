@@ -100,9 +100,9 @@ export default function FocusPage() {
     if (running) {
       document.title = `${formatTime(secs)} – ${type === 'work' ? '🎯 Focus' : '☕ Break'}`;
     } else {
-      document.title = 'Elixor OS — Focus Mode';
+      document.title = 'ELIXOR — Focus Mode';
     }
-    return () => { document.title = 'Elixor OS — Personal AI Operating System'; };
+    return () => { document.title = 'ELIXOR — Personal AI Operating System'; };
   }, [secs, running, type]);
 
   const handleComplete = useCallback(async () => {

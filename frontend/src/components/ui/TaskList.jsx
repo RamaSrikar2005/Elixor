@@ -5,8 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const TAG_STYLES = {
   Work:     'text-[#0ea5e9] bg-[rgba(14,165,233,0.1)]  border-[rgba(14,165,233,0.2)]',
+  Study:    'text-[#a78bfa] bg-[rgba(167,139,250,0.1)] border-[rgba(167,139,250,0.2)]',
   Health:   'text-[#10b981] bg-[rgba(16,185,129,0.1)]  border-[rgba(16,185,129,0.2)]',
-  Growth:   'text-[#a78bfa] bg-[rgba(124,58,237,0.1)]  border-[rgba(124,58,237,0.2)]',
+  Fitness:  'text-[#f97316] bg-[rgba(249,115,22,0.1)]  border-[rgba(249,115,22,0.2)]',
+  Growth:   'text-[#38bdf8] bg-[rgba(56,189,248,0.1)]  border-[rgba(56,189,248,0.2)]',
   Finance:  'text-[#f59e0b] bg-[rgba(245,158,11,0.1)]  border-[rgba(245,158,11,0.2)]',
   Personal: 'text-[#f43f5e] bg-[rgba(244,63,94,0.1)]   border-[rgba(244,63,94,0.2)]',
   Custom:   'text-[#06e5d4] bg-[rgba(6,229,212,0.1)]   border-[rgba(6,229,212,0.2)]',
@@ -162,7 +164,7 @@ export default function TaskList({ compact = false }) {
                 className="input-field py-2 text-sm flex-1"
                 value={form.tag}
                 onChange={e => setForm(f => ({ ...f, tag: e.target.value }))}>
-                {['Work', 'Health', 'Growth', 'Finance', 'Personal', 'Custom'].map(t => (
+                {['Work', 'Study', 'Health', 'Fitness', 'Growth', 'Finance', 'Personal', 'Custom'].map(t => (
                   <option key={t} value={t}>{t}</option>
                 ))}
               </select>

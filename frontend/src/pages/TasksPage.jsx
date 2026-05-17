@@ -125,7 +125,7 @@ export default function TasksPage() {
           {/* Category breakdown */}
           <div className="card card-bio p-5">
             <div className="label mb-4">By Category</div>
-            {['Work', 'Health', 'Growth', 'Finance', 'Personal', 'Custom']
+            {['Work', 'Study', 'Health', 'Fitness', 'Growth', 'Finance', 'Personal', 'Custom']
               .map(tag => ({ tag, count: tasks.filter(t => t.tag === tag && !t.done).length }))
               .filter(x => x.count > 0)
               .map(({ tag, count }) => (

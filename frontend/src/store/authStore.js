@@ -2,13 +2,19 @@ import { create } from 'zustand';
 import { authApi } from '../services/api.js';
 import { connectSocket, disconnectSocket } from '../services/socket.js';
 
-export const useAuthStore = create((set, get) => ({
+export const useAuthStore = create((set) => ({
   user:    null,
   token:   null,
   loading: true,
   error:   null,
 
   setToken: (token) => set({ token }),
+
+  // Called by OTP screen after successful verification
+  setAuthData: (user, token) => {
+    set({ user, token });
+    connectSocket(token);
+  },
 
   // Silent refresh on app mount
   init: async () => {
@@ -24,18 +30,10 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
+  // login — may throw with pendingVerification on 403
   login: async (email, password) => {
     set({ error: null });
     const { data } = await authApi.login({ email, password });
-    const { user, accessToken } = data.data;
-    set({ user, token: accessToken });
-    connectSocket(accessToken);
-    return user;
-  },
-
-  register: async (name, email, password) => {
-    set({ error: null });
-    const { data } = await authApi.register({ name, email, password });
     const { user, accessToken } = data.data;
     set({ user, token: accessToken });
     connectSocket(accessToken);

@@ -133,7 +133,7 @@ function LiveSession({ subjects, onComplete }) {
   // Timer — only depends on `running`, not `secs`, to avoid creating a new
   // interval every tick (which caused the session to never advance properly).
   useEffect(() => {
-    if (!running) { clearInterval(ref.current); document.title = 'Elixor OS'; return; }
+    if (!running) { clearInterval(ref.current); document.title = 'ELIXOR'; return; }
     ref.current = setInterval(() => setSecs(s => s + 1), 1000);
     return () => clearInterval(ref.current);
   }, [running]);
@@ -267,24 +267,26 @@ function LiveSession({ subjects, onComplete }) {
 }
 
 /* ─── AI Scholar with Mermaid ────────────────────────────────── */
-const SCHOLAR_SYSTEM = `You are an elite AI Study Scholar inside Elixor OS — a futuristic AI productivity platform.
+const SCHOLAR_SYSTEM = `You are an elite AI Study Scholar inside ELIXOR — a futuristic AI productivity platform.
 You help students understand concepts, solve problems, create study materials, and prepare for competitive exams.
 
-DIAGRAM GENERATION:
-- When asked for diagrams, flowcharts, mind maps, architecture, algorithms, or visual representations,
-  generate Mermaid.js syntax wrapped in \`\`\`mermaid code blocks.
-- For flowcharts use: graph TD, graph LR, or flowchart TD
-- For mind maps use: mindmap
-- For sequences use: sequenceDiagram
-- For class diagrams use: classDiagram
-- Always use dark-compatible colors and keep diagrams clean and informative.
+DIAGRAM GENERATION — CRITICAL MERMAID RULES (Mermaid v11):
+- When asked for diagrams, ALWAYS wrap Mermaid code in \`\`\`mermaid blocks.
+- ALWAYS use "flowchart TD" or "flowchart LR" — NEVER use "graph TD" or "graph LR" (deprecated).
+- Node labels: NEVER use emojis, special characters (&, <, >, "), or backticks inside brackets [ ] ( ) { }.
+- Edge labels |text here|: NEVER use emojis or special characters in edge labels.
+- Keep all labels short, alphanumeric, with spaces and hyphens only.
+- BAD:  A[Start 🚀] -->|Yes ✓| B{Done?}
+- GOOD: A[Start] -->|Yes| B{Done?}
+- Supported diagram types: flowchart, sequenceDiagram, classDiagram, stateDiagram-v2, gantt, pie, mindmap, journey, gitGraph
+- For mindmap: use standard indentation, no special chars in nodes.
+- For sequenceDiagram: participant names must be simple words only.
 
 TEACHING STYLE:
-- Use clear, simple language
-- Give examples
-- Use **bold** for key terms
+- Use clear, simple language with **bold** for key terms
+- Give examples and use step-by-step explanations
 - Keep answers focused and actionable
-- If generating code, wrap in code blocks with language specified`;
+- Generate diagrams proactively when explaining processes, algorithms, or systems`;
 
 function AIScholar({ subjects }) {
   const { token }   = useAuthStore();
@@ -1076,7 +1078,7 @@ export default function StudyPage() {
         <div className="relative flex items-center justify-between flex-wrap gap-5">
           <div>
             <div className="font-mono text-[10px] tracking-widest uppercase text-[rgba(14,165,233,0.6)] mb-2">
-              ⭐ Elixor Study Engine · AI-Powered
+              ⭐ ELIXOR Study Engine · AI-Powered
             </div>
             <h1 className="font-display font-bold text-3xl tracking-tight mb-1">
               Study Intelligence

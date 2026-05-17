@@ -26,7 +26,7 @@ export const BADGES = [
   { id: 'saver_70',   name: 'Wealth Builder',  emoji: '💎', rarity: 'rare',      desc: 'Saved 70% of monthly income',         check: d => parseFloat(d?.finance?.savingsRate ?? '0') >= 70 },
   // Productivity
   { id: 'prod_80',    name: 'Peak Performer',  emoji: '🧠', rarity: 'rare',      desc: 'Productivity score above 80',         check: d => (d?.scores?.productivity ?? 0) >= 80  },
-  { id: 'prod_100',   name: 'Elixor Elite',    emoji: '👑', rarity: 'legendary', desc: 'Perfect 100 productivity score',      check: d => (d?.scores?.productivity ?? 0) >= 100 },
+  { id: 'prod_100',   name: 'ELIXOR Elite',    emoji: '👑', rarity: 'legendary', desc: 'Perfect 100 productivity score',      check: d => (d?.scores?.productivity ?? 0) >= 100 },
   // XP
   { id: 'xp_1000',   name: 'XP Grinder',      emoji: '🎮', rarity: 'common',    desc: '1,000 XP earned',                    check: d => (d?.user?.xp ?? 0) >= 1000  },
   { id: 'xp_5000',   name: 'Level Up Hero',   emoji: '⭐', rarity: 'rare',      desc: '5,000 XP earned',                    check: d => (d?.user?.xp ?? 0) >= 5000  },

@@ -52,7 +52,7 @@ export default function DashboardPage() {
                   {d?.user?.rank || user?.rank || 'Explorer'} · Intelligence Layer
                 </div>
                 <div className="font-display font-bold text-2xl tracking-tight mb-2.5">
-                  {d?.user?.name || user?.name || 'Elixor OS'}
+                  {d?.user?.name || user?.name || 'ELIXOR'}
                 </div>
                 <div className="xp-track w-60 mb-1.5">
                   <div className="xp-fill" style={{ width: `${xpPct}%` }} />

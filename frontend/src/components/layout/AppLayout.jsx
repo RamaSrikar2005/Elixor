@@ -75,7 +75,7 @@ export default function AppLayout() {
               <motion.div initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -8 }}
                 className="overflow-hidden whitespace-nowrap">
                 <div className="font-display font-bold text-base tracking-tight leading-none bg-gradient-to-r from-[#f0f9ff] to-[#7dd3fc] bg-clip-text text-transparent">
-                  ELIXOR OS
+                  ELIXOR
                 </div>
                 <div className="font-mono text-[9px] text-[rgba(14,165,233,0.5)] mt-0.5">v2.0 · Intelligence Layer</div>
               </motion.div>
@@ -143,7 +143,7 @@ export default function AppLayout() {
         {/* Topbar */}
         <header className="flex items-center justify-between px-6 h-14 bg-[rgba(1,2,3,0.8)] backdrop-blur-2xl border-b border-[rgba(14,165,233,0.06)] flex-shrink-0">
           <div className="flex items-center gap-2 font-mono text-xs text-[rgba(186,230,253,0.4)]">
-            <span className="text-[rgba(186,230,253,0.25)]">Elixor OS</span>
+            <span className="text-[rgba(186,230,253,0.25)]">ELIXOR</span>
             <span className="text-[rgba(186,230,253,0.2)]">›</span>
             <span className="text-[rgba(186,230,253,0.7)] font-semibold capitalize">
               {location.pathname.slice(1) || 'Dashboard'}
