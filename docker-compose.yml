@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: elixor_os
+    networks: [elixor]
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ../docker/backend.Dockerfile
+    restart: unless-stopped
+    env_file: ./backend/.env
+    environment:
+      MONGO_URI: mongodb://mongo:27017/elixor_os
+      CLIENT_URL: http://localhost
+      NODE_ENV: production
+    ports:
+      - "5000:5000"
+    depends_on: [mongo]
+    networks: [elixor]
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../docker/frontend.Dockerfile
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on: [backend]
+    networks: [elixor]
+
+volumes:
+  mongo_data:
+
+networks:
+  elixor:
+    driver: bridge
